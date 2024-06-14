@@ -3,15 +3,15 @@ import json
 import base64
 import logging
 
-server_address=('127.0.0.1',6666)
+server_address=('172.16.16.101',8889)
 
 def send_command(command_str=""):
     global server_address
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.connect(server_address)
-    logging.warning(f"connecting to {server_address}")
+    # logging.warning(f"connecting to {server_address}")
     try:
-        logging.warning(f"sending message ")
+        # logging.warning(f"sending message ")
         sock.sendall(command_str.encode())
         # Look for the response, waiting until socket is done (no more data)
         data_received="" #empty string
@@ -29,10 +29,10 @@ def send_command(command_str=""):
         # at this point, data_received (string) will contain all data coming from the socket
         # to be able to use the data_received as a dict, need to load it using json.loads()
         hasil = json.loads(data_received)
-        logging.warning("data received from server:")
+        # logging.warning("data received from server:")
         return hasil
     except:
-        logging.warning("error during data receiving")
+        # logging.warning("error during data receiving")
         return False
 
 
@@ -40,7 +40,7 @@ def remote_list():
     command_str=f"LIST"
     hasil = send_command(command_str)
     if (hasil['status']=='OK'):
-        print("daftar file : ")
+        print("Daftar file : ")
         for nmfile in hasil['data']:
             print(f"- {nmfile}")
         return True
@@ -69,10 +69,10 @@ def remote_upload(filename=""):
     if (hasil['status']=='OK'):
         #proses file dalam bentuk base64 ke bentuk bytes
 
-        print('Upload berhasil')
+        print(f'Berhasil mengupload file \'{filename}\'')
         return True
     else:
-        print("Gagal mengupload file")
+        print(f"Gagal mengupload file {filename}")
         print(hasil['data'])
         return False
 
@@ -80,11 +80,11 @@ def remote_delete(filename=""):
     command_str=f"DELETE {filename}"
     hasil = send_command(command_str)
     if (hasil['status']=='OK'):
-        print("File berhasil dihapus")
+        print(f"File '{filename}' berhasil dihapus")
         return True
     else:
-        print("Gagal menghapus file")
-        print(hasil['data'])
+        print(f"Gagal menghapus file '{filename}'")
+        # print(f'Error : {hasil["data"]}')
         return False
 
 
